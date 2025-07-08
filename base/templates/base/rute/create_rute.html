@@ -1,0 +1,87 @@
+{% extends 'index.html' %} {% block content %}
+
+<div class="container mx-auto max-w-xl bg-white p-6 rounded-xl shadow">
+  <h1 class="text-2xl font-bold mb-6 text-center text-blue-700">Tambah RUte</h1>
+
+  <form method="POST" action="{% url 'create_rute' %}" class="space-y-4">
+    {% csrf_token %}
+
+    <div>
+      <label class="label font-medium text-gray-700">Lokasi Awal</label>
+      <input
+        type="text"
+        name="awal"
+        value="{{ form.awal.value|default:'' }}"
+        class="input border input-bordered w-full"
+        placeholder="Contoh: BPN"
+      />
+      {% if form.awal.errors %}
+      <p class="text-red-500 text-sm mt-1">{{ form.awal.errors.0 }}</p>
+      {% endif %}
+    </div>
+
+    <div>
+      <label class="label font-medium text-gray-700">Lokasi Tujuan</label>
+      <input
+        type="text"
+        name="tujuan"
+        value="{{ form.tujuan.value|default:'' }}"
+        class="input border input-bordered w-full"
+        placeholder="Contoh: SMR"
+      />
+      {% if form.tujuan.errors %}
+      <p class="text-red-500 text-sm mt-1">{{ form.tujuan.errors.0 }}</p>
+      {% endif %}
+    </div>
+
+    <div>
+      <label class="label font-medium text-gray-700">Jarak (km)</label>
+      <input
+        type="number"
+        name="jarak"
+        value="{{ form.jarak.value|default:'' }}"
+        class="input border input-bordered w-full"
+        placeholder="Contoh: 110"
+      />
+      {% if form.jarak.errors %}
+      <p class="text-red-500 text-sm mt-1">{{ form.jarak.errors.0 }}</p>
+      {% endif %}
+    </div>
+
+    <div>
+      <label class="label font-medium text-gray-700"
+        >Waktu Tempuh (menit)</label
+      >
+      <input
+        type="number"
+        name="waktu_tempuh"
+        value="{{ form.waktu_tempuh.value|default:'' }}"
+        class="input border input-bordered w-full"
+        placeholder="Contoh: 150"
+      />
+      {% if form.waktu_tempuh.errors %}
+      <p class="text-red-500 text-sm mt-1">{{ form.waktu_tempuh.errors.0 }}</p>
+      {% endif %}
+    </div>
+
+    <div>
+      <label class="label font-medium text-gray-700">Harga per KM (Rp)</label>
+      <input
+        type="number"
+        name="price_per_km"
+        value="{{ form.price_per_km.value|default:'' }}"
+        class="input border input-bordered w-full"
+        placeholder="Contoh: 2000"
+      />
+      {% if form.price_per_km.errors %}
+      <p class="text-red-500 text-sm mt-1">{{ form.price_per_km.errors.0 }}</p>
+      {% endif %}
+    </div>
+
+    <div class="text-center">
+      <button type="submit" class="btn btn-success w-full">Submit</button>
+    </div>
+  </form>
+</div>
+
+{% endblock %}

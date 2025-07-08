@@ -1,0 +1,471 @@
+{% extends 'index.html' %} {% block content %}
+<div class="container mx-auto px-4 py-8">
+  <h1 class="text-3xl font-bold mb-6 text-center text-blue-700">
+    Driver Performance Dashboard
+  </h1>
+
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+    <div class="bg-white p-6 rounded-xl shadow text-center">
+      <h2 class="text-gray-500">Total Drivers</h2>
+      <p class="text-2xl font-bold text-blue-600">{{ all_drivers|length }}</p>
+    </div>
+    <div class="bg-white p-6 rounded-xl shadow text-center">
+      <h2 class="text-gray-500">Total Routes</h2>
+      <p class="text-2xl font-bold text-green-600">{{ all_rute|length }}</p>
+    </div>
+    <div class="bg-white p-6 rounded-xl shadow text-center">
+      <h2 class="text-gray-500">Total Transactions</h2>
+      <p class="text-2xl font-bold text-purple-600">
+        {{ all_transaksi|length }}
+      </p>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+    <div class="bg-white p-6 rounded-xl shadow">
+      <h2 class="text-xl font-semibold mb-4 text-red-500">Delay Terbanyak</h2>
+      <div class="overflow-x-auto">
+        <table class="table w-full border border-gray-300">
+          <thead>
+            <tr>
+              <th class="border border-gray-300 text-center">#</th>
+              <th class="border border-gray-300 text-center">Nama</th>
+              <th class="border border-gray-300 text-center">Plat Nomor</th>
+              <th class="border border-gray-300 text-center">Telat # kali</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for d in driver_telat %}
+            <tr>
+              <td class="border border-gray-300 text-center">
+                {{ forloop.counter }}
+              </td>
+              <td class="border border-gray-300 text-center">{{ d.nama }}</td>
+              <td class="border border-gray-300 text-center">{{ d.plat }}</td>
+              <td class="border border-gray-300 text-center">
+                {{ d.total_telat|default:0 }}
+              </td>
+            </tr>
+            {% empty %}
+            <tr>
+              <td colspan="4" class="border border-gray-300 text-center">
+                No data
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="bg-white p-6 rounded-xl shadow">
+      <h2 class="text-xl font-semibold mb-4 text-green-600">
+        Penghasil Uang Terbanyak
+      </h2>
+      <div class="overflow-x-auto">
+        <table class="table w-full border border-gray-300">
+          <thead>
+            <tr>
+              <th class="border border-gray-300 text-center">#</th>
+              <th class="border border-gray-300 text-center">Nama</th>
+              <th class="border border-gray-300 text-center">Plat Nomor</th>
+              <th class="border border-gray-300 text-center">Revenue</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for d in cost_terbanyak %}
+            <tr>
+              <td class="border border-gray-300 text-center">
+                {{ forloop.counter }}
+              </td>
+              <td class="border border-gray-300 text-center">{{ d.nama }}</td>
+              <td class="border border-gray-300 text-center">{{ d.plat }}</td>
+              <td class="border border-gray-300 text-center">
+                IDR {{ d.total_cost|default:0 }}
+              </td>
+            </tr>
+            {% empty %}
+            <tr>
+              <td colspan="4" class="border border-gray-300 text-center">
+                No data
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="bg-white p-6 rounded-xl shadow">
+      <h2 class="text-xl font-semibold mb-4 text-blue-600">Driver Terjauh</h2>
+      <div class="overflow-x-auto">
+        <table class="table w-full border border-gray-300">
+          <thead>
+            <tr>
+              <th class="border border-gray-300 text-center">#</th>
+              <th class="border border-gray-300 text-center">Nama</th>
+              <th class="border border-gray-300 text-center">Plat Nomor</th>
+              <th class="border border-gray-300 text-center">Distance (km)</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for d in driver_terjauh %}
+            <tr>
+              <td class="border border-gray-300 text-center">
+                {{ forloop.counter }}
+              </td>
+              <td class="border border-gray-300 text-center">{{ d.nama }}</td>
+              <td class="border border-gray-300 text-center">{{ d.plat }}</td>
+              <td class="border border-gray-300 text-center">
+                {{ d.total_jarak|default:0 }}
+              </td>
+            </tr>
+            {% empty %}
+            <tr>
+              <td colspan="4" class="border border-gray-300 text-center">
+                No data
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="bg-white p-6 rounded-xl shadow">
+      <h2 class="text-xl font-semibold mb-4 text-purple-600">
+        Total Trips per Driver
+      </h2>
+      <div class="overflow-x-auto">
+        <table class="table w-full border border-gray-300">
+          <thead>
+            <tr>
+              <th class="border border-gray-300 text-center">#</th>
+              <th class="border border-gray-300 text-center">Nama</th>
+              <th class="border border-gray-300 text-center">Plat Nomor</th>
+              <th class="border border-gray-300 text-center">Total Trips</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for d in trip_per_driver|slice:":5" %}
+            <tr>
+              <td class="border border-gray-300 text-center">
+                {{ forloop.counter }}
+              </td>
+              <td class="border border-gray-300 text-center">{{ d.nama }}</td>
+              <td class="border border-gray-300 text-center">{{ d.plat }}</td>
+              <td class="border border-gray-300 text-center">
+                {{ d.total_trip|default:0 }}
+              </td>
+            </tr>
+            {% empty %}
+            <tr>
+              <td colspan="4" class="border border-gray-300 text-center">
+                No data
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-12">
+    <h2 class="text-3xl font-bold mb-6 text-center text-gray-800">
+      Semua data yang ada
+    </h2>
+
+    <div class="bg-white p-6 rounded-xl shadow mb-8">
+      <h3 class="text-xl font-semibold mb-4 text-blue-700">Semua driver</h3>
+      <div class="overflow-x-auto">
+        <table class="table w-full border border-gray-300">
+          <thead>
+            <tr>
+              <th class="border border-gray-300 text-center">#</th>
+              <th class="border border-gray-300 text-center">Nama</th>
+              <th class="border border-gray-300 text-center">Plat Nomor</th>
+              <th class="border border-gray-300 text-center">Actions</th>
+              {# New Column #}
+            </tr>
+          </thead>
+          <tbody>
+            {% for driver in all_drivers %}
+            <tr>
+              <td class="border border-gray-300 text-center">
+                {{ forloop.counter }}
+              </td>
+              <td class="border border-gray-300 text-center">
+                {{ driver.nama }}
+              </td>
+              <td class="border border-gray-300 text-center">
+                {{ driver.plat }}
+              </td>
+              <td class="border border-gray-300 text-center">
+                {# Action Buttons #}
+                <a
+                  href="{% url 'update_driver' driver.id %}"
+                  class="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-1 px-3 rounded text-xs"
+                  >Update</a
+                >
+                <a
+                  href="{% url 'delete_driver' driver.id %}"
+                  class="bg-red-500 hover:bg-red-600 text-white font-bold py-1 px-3 rounded text-xs ml-1"
+                  >Delete</a
+                >
+              </td>
+            </tr>
+            {% empty %}
+            <tr>
+              <td colspan="5" class="border border-gray-300 text-center">
+                No drivers found.
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="bg-white p-6 rounded-xl shadow mb-8">
+      <h3 class="text-xl font-semibold mb-4 text-green-700">Semua Rtue</h3>
+      <div class="overflow-x-auto">
+        <table class="table w-full border border-gray-300">
+          <thead>
+            <tr>
+              <th class="border border-gray-300 text-center">#</th>
+              <th class="border border-gray-300 text-center">Asal</th>
+              <th class="border border-gray-300 text-center">Tujuan</th>
+              <th class="border border-gray-300 text-center">Jarak (km)</th>
+              <th class="border border-gray-300 text-center">Total (IDR)</th>
+              <th class="border border-gray-300 text-center">Actions</th>
+              {# New Column #}
+            </tr>
+          </thead>
+          <tbody>
+            {% for route in all_rute %}
+            <tr>
+              <td class="border border-gray-300 text-center">
+                {{ forloop.counter }}
+              </td>
+              <td class="border border-gray-300 text-center">
+                {{ route.awal }}
+              </td>
+              <td class="border border-gray-300 text-center">
+                {{ route.tujuan }}
+              </td>
+              <td class="border border-gray-300 text-center">
+                {{ route.jarak }}
+              </td>
+              <td class="border border-gray-300 text-center">
+                IDR {{ route.total }}
+              </td>
+              <td class="border border-gray-300 text-center">
+                <a
+                  href="{% url 'update_rute' route.id %}"
+                  class="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-1 px-3 rounded text-xs"
+                  >Update</a
+                >
+                <a
+                  href="{% url 'delete_rute' route.id %}"
+                  class="bg-red-500 hover:bg-red-600 text-white font-bold py-1 px-3 rounded text-xs ml-1"
+                  >Delete</a
+                >
+              </td>
+            </tr>
+            {% empty %}
+            <tr>
+              <td colspan="6" class="border border-gray-300 text-center">
+                No routes found.
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="bg-white p-6 rounded-xl shadow mb-8">
+      <h3 class="text-xl font-semibold mb-4 text-purple-700">
+        Semua transaksi
+      </h3>
+      <div class="overflow-x-auto">
+        <table class="table w-full border border-gray-300">
+          <thead>
+            <tr>
+              <th class="border border-gray-300 text-center">#</th>
+              <th class="border border-gray-300 text-center">Driver</th>
+              <th class="border border-gray-300 text-center">
+                Rute (Asal - Tujuan)
+              </th>
+              <th class="border border-gray-300 text-center">
+                Total Waktu (Expected)
+              </th>
+              <th class="border border-gray-300 text-center">
+                Total Waktu (aktual)
+              </th>
+              <th class="border border-gray-300 text-center">Telat (min)</th>
+              <th class="border border-gray-300 text-center">Harga Total</th>
+              <th class="border border-gray-300 text-center">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for transaction in all_transaksi %}
+            <tr>
+              <td class="border border-gray-300 text-center">
+                {{ forloop.counter }}
+              </td>
+              <td class="border border-gray-300 text-center">
+                {{ transaction.driver.nama }}
+              </td>
+              <td class="border border-gray-300 text-center">
+                {{ transaction.rute.awal }} - {{ transaction.rute.tujuan }}
+              </td>
+              <td class="border border-gray-300 text-center">
+                {{ transaction.rute.waktu_tempuh }}
+              </td>
+              <td class="border border-gray-300 text-center">
+                {{ transaction.waktu_asli }}
+              </td>
+              <td class="border border-gray-300 text-center">
+                {{ transaction.telat|default:0 }}
+              </td>
+              <td class="border border-gray-300 text-center">
+                {{ transaction.rute.total|default:0 }}
+              </td>
+              <td class="border border-gray-300 text-center">
+                <a
+                  href="{% url 'delete_transaksi' transaction.id %}"
+                  class="bg-red-500 hover:bg-red-600 text-white font-bold py-1 px-3 rounded text-xs ml-1"
+                  >Delete</a
+                >
+              </td>
+            </tr>
+            {% empty %}
+            <tr>
+              <td colspan="8" class="border border-gray-300 text-center">
+                No transactions found.
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-8 my-12">
+    <div class="bg-white p-6 rounded-xl shadow">
+      <h2 class="text-xl font-semibold mb-4 text-blue-700 text-center">
+        Drivers trip terbanyak
+      </h2>
+      <canvas id="tripChart"></canvas>
+    </div>
+
+    <div class="bg-white p-6 rounded-xl shadow">
+      <h2 class="text-xl font-semibold mb-4 text-green-700 text-center">
+        Menghasilkan Revenua Terbanyak
+      </h2>
+      <canvas id="revenueChart"></canvas>
+    </div>
+  </div>
+
+  <div class="mt-12 text-center space-x-4">
+    <a
+      href="{% url 'create_driver' %}"
+      class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-full shadow"
+    >
+      tambah dirver
+    </a>
+    <a
+      href="{% url 'create_rute' %}"
+      class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-4 rounded-full shadow"
+    >
+      tambah rute
+    </a>
+    <a
+      href="{% url 'create_transaksi' %}"
+      class="ml-4 bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded-full shadow"
+    >
+      tambah transaksi
+    </a>
+  </div>
+</div>
+
+{% endblock %} {% block scripts %}
+<script>
+  const tripCtx = document.getElementById('tripChart').getContext('2d');
+  const revenueCtx = document.getElementById('revenueChart').getContext('2d');
+
+  const tripChart = new Chart(tripCtx, {
+    type: 'bar',
+    data: {
+      labels: {{ trip_labels|safe }},
+      datasets: [{
+        label: 'Total Trips',
+        data: {{ trip_data|safe }},
+        backgroundColor: ['#3B82F6', '#2563EB', '#1D4ED8', '#0047AB', '#6495ED'],
+        borderRadius: 8
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { display: false },
+        title: {
+          display: true,
+          text: 'Drivers with Most Trips',
+          font: {
+            size: 18,
+            weight: 'bold'
+          },
+          color: '#1E3A8A'
+        }
+      },
+      scales: {
+        x: {
+          title: {
+            display: true,
+            text: 'Driver Name'
+          }
+        },
+        y: {
+          title: {
+            display: true,
+            text: 'Number of Trips'
+          },
+          beginAtZero: true
+        }
+      }
+    }
+  });
+
+  const revenueChart = new Chart(revenueCtx, {
+    type: 'bar',
+    data: {
+      labels: {{ revenue_labels|safe }},
+      datasets: [{
+        label: 'Revenue',
+        data: {{ revenue_data|safe }},
+        backgroundColor: ['#10B981', '#34D399', '#6EE7B7', '#065F46', '#22C55E'],
+        borderWidth: 1
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { position: 'bottom' },
+        title: {
+          display: true,
+          text: 'Revenue Generated by Drivers',
+          font: {
+            size: 18,
+            weight: 'bold'
+          },
+          color: '#047857'
+        }
+      }
+    }
+  });
+</script>
+{% endblock scripts %}

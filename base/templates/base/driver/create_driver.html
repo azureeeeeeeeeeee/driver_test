@@ -1,0 +1,45 @@
+{% extends 'index.html' %} {% block content %}
+
+<div class="container mx-auto max-w-lg bg-white p-6 rounded-xl shadow">
+  <h1 class="text-2xl font-bold mb-6 text-center text-blue-700">
+    Tambah Driver
+  </h1>
+
+  <form method="POST" action="{% url 'create_driver' %}" class="space-y-4">
+    {% csrf_token %}
+
+    <div>
+      <label class="label font-medium text-gray-700">Nama Driver</label>
+      <input
+        type="text"
+        name="nama"
+        value="{{ form.nama.value|default:'' }}"
+        class="input border input-bordered w-full"
+        placeholder="Masukkan nama driver"
+      />
+      {% if form.nama.errors %}
+      <p class="text-red-500 text-sm mt-1">{{ form.nama.errors.0 }}</p>
+      {% endif %}
+    </div>
+
+    <div>
+      <label class="label font-medium text-gray-700">Plat Nomor</label>
+      <input
+        type="text"
+        name="plat"
+        value="{{ form.plat.value|default:'' }}"
+        class="input border input-bordered w-full"
+        placeholder="Contoh: KT 1234 AB"
+      />
+      {% if form.plat.errors %}
+      <p class="text-red-500 text-sm mt-1">{{ form.plat.errors.0 }}</p>
+      {% endif %}
+    </div>
+
+    <div class="text-center">
+      <button type="submit" class="btn btn-primary w-full">Submit</button>
+    </div>
+  </form>
+</div>
+
+{% endblock %}
